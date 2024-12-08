@@ -47,3 +47,61 @@ export const createProduct = async(req: Request, res: Response) => {
         console.log(error)
     }
 }
+
+
+export const updateProduct = async (req: Request, res: Response) => {
+    const { id } = req.params; // Captura el parámetro "id" de la solicitud
+        const product = await Product.findByPk(id); // Busca el producto en la base de datos
+
+        if (!product) {
+            // Si no se encuentra el producto, responde con un 404
+            res.status(404).json({
+                error: 'Producto no encontrado',
+            });
+            return; // Detén la ejecución después de enviar la respuesta
+        }
+
+        //Actualizar
+        await product.update(req.body)
+        await product.save()
+
+        res.json({data: product})
+}
+
+
+export const updateAvailability = async (req: Request, res: Response) => {
+    const { id } = req.params; // Captura el parámetro "id" de la solicitud
+        const product = await Product.findByPk(id); // Busca el producto en la base de datos
+
+        if (!product) {
+            // Si no se encuentra el producto, responde con un 404
+            res.status(404).json({
+                error: 'Producto no encontrado',
+            });
+            return; // Detén la ejecución después de enviar la respuesta
+        }
+
+        //Actualizar
+        product.availability = !product.dataValues.availability
+        await product.save()
+
+        res.json({data: product})
+}
+
+
+export const deleteProduct = async (req: Request, res: Response) => {
+    const { id } = req.params; // Captura el parámetro "id" de la solicitud
+        const product = await Product.findByPk(id); // Busca el producto en la base de datos
+
+        if (!product) {
+            // Si no se encuentra el producto, responde con un 404
+            res.status(404).json({
+                error: 'Producto no encontrado',
+            });
+            return; // Detén la ejecución después de enviar la respuesta
+        }
+
+        await product.destroy()
+        res.json({data: 'Prodcuto Eliminado'})
+
+}
