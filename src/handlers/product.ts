@@ -1,107 +1,93 @@
-import { Request, Response} from 'express'
-import Product from '../models/Product.model'
+import { Request, Response } from 'express';
+import Product from '../models/Product.model';
 
-
-export const getProducts = async (req: Request, res: Response) => {
+export const getProducts = async (req: Request, res: Response): Promise<void> => {
     try {
         const products = await Product.findAll({
-            order: [
-                ['price', 'DESC']
-            ], 
-            attributes: {exclude: ['createdAt', 'updatedAt', 'availability']}
-        })
-        res.json({data: products})
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-export const getProductById = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const { id } = req.params; // Captura el parámetro "id" de la solicitud
-        const product = await Product.findByPk(id); // Busca el producto en la base de datos
-
-        if (!product) {
-            // Si no se encuentra el producto, responde con un 404
-            res.status(404).json({
-                error: 'Producto no encontrado',
-            });
-            return; // Detén la ejecución después de enviar la respuesta
-        }
-
-        // Responde con el producto encontrado
-        res.json({ data: product });
-    } catch (error) {
-        console.error(error); // Registra cualquier error en la consola
-        res.status(500).json({
-            error: 'Error interno del servidor',
+            order: [['price', 'DESC']],
         });
+        res.status(200).json({ data: products });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener los productos' });
     }
 };
 
-export const createProduct = async(req: Request, res: Response) => {
-    try{
-        const product = await Product.create(req.body)
-        res.json({data: product})
-    }catch (error) {
-        console.log(error)
+export const getProductById = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const product = await Product.findByPk(id);
+
+        if (!product) {
+            res.status(404).json({ error: 'Producto No Encontrado' });
+            return;
+        }
+
+        res.status(200).json({ data: product });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener el producto' });
     }
-}
+};
 
+export const createProduct = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const product = await Product.create(req.body);
+        res.status(201).json({ data: product });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al crear el producto' });
+    }
+};
 
-export const updateProduct = async (req: Request, res: Response) => {
-    const { id } = req.params; // Captura el parámetro "id" de la solicitud
-        const product = await Product.findByPk(id); // Busca el producto en la base de datos
-
-        if (!product) {
-            // Si no se encuentra el producto, responde con un 404
-            res.status(404).json({
-                error: 'Producto no encontrado',
-            });
-            return; // Detén la ejecución después de enviar la respuesta
-        }
-
-        //Actualizar
-        await product.update(req.body)
-        await product.save()
-
-        res.json({data: product})
-}
-
-
-export const updateAvailability = async (req: Request, res: Response) => {
-    const { id } = req.params; // Captura el parámetro "id" de la solicitud
-        const product = await Product.findByPk(id); // Busca el producto en la base de datos
+export const updateProduct = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const product = await Product.findByPk(id);
 
         if (!product) {
-            // Si no se encuentra el producto, responde con un 404
-            res.status(404).json({
-                error: 'Producto no encontrado',
-            });
-            return; // Detén la ejecución después de enviar la respuesta
+            res.status(404).json({ error: 'Producto No Encontrado' });
+            return;
         }
 
-        //Actualizar
-        product.availability = !product.dataValues.availability
-        await product.save()
+        // Actualizar producto
+        await product.update(req.body);
+        res.status(200).json({ data: product });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al actualizar el producto' });
+    }
+};
 
-        res.json({data: product})
-}
-
-
-export const deleteProduct = async (req: Request, res: Response) => {
-    const { id } = req.params; // Captura el parámetro "id" de la solicitud
-        const product = await Product.findByPk(id); // Busca el producto en la base de datos
+export const updateAvailability = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const product = await Product.findByPk(id);
 
         if (!product) {
-            // Si no se encuentra el producto, responde con un 404
-            res.status(404).json({
-                error: 'Producto no encontrado',
-            });
-            return; // Detén la ejecución después de enviar la respuesta
+            res.status(404).json({ error: 'Producto No Encontrado' });
+            return;
         }
 
-        await product.destroy()
-        res.json({data: 'Prodcuto Eliminado'})
+        // Actualizar disponibilidad
+        product.availability = !product.dataValues.availability;
+        await product.save();
+        res.status(200).json({ data: product });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al actualizar la disponibilidad' });
+    }
+};
 
-}
+export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const product = await Product.findByPk(id);
+
+        if (!product) {
+            res.status(404).json({ error: 'Producto No Encontrado' });
+            return;
+        }
+
+        // Eliminar producto
+        await product.destroy();
+        res.status(200).json({ data: 'Producto Eliminado' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al eliminar el producto' });
+    }
+};

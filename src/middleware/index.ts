@@ -2,14 +2,14 @@ import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 
 export const handleInputErrors = (req: Request, res: Response, next: NextFunction): void => {
-    // Verificar errores de validación
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
-        // Retornar errores si existen
+        // Envía una respuesta de error y detiene el flujo
         res.status(400).json({ errors: errors.array() });
-        return; // Detener la ejecución
+        return; // Detiene el flujo para evitar llamar a `next`
     }
 
-    // Pasar al siguiente middleware si no hay errores
+    // Continúa con el siguiente middleware si no hay errores
     next();
 };
