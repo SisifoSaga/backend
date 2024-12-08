@@ -1,14 +1,18 @@
 import { Router } from 'express';
-import { body } from 'express-validator';
-import { createProduct } from './handlers/product';
+import { body, param } from 'express-validator';
+import { createProduct, getProductById, getProducts } from './handlers/product';
 import { handleInputErrors } from './middleware';
 
 const router = Router();
 
-// Rutas
-router.get('/', (req, res) => {
-    res.json('Desde GET');
-});
+// Routing
+router.get('/', getProducts)
+router.get('/:id',
+    param('id').isInt().withMessage('ID no valido'),
+    handleInputErrors,
+    
+    getProductById
+)
 
 router.post(
     '/',
@@ -25,11 +29,11 @@ router.post(
 );
 
 router.put('/', (req, res) => {
-    res.json('Desde PUT');
+    res.json('Desde PUT')
 });
 
 router.delete('/', (req, res) => {
-    res.json('Desde DELETE');
-});
+    res.json('Desde DELETE')
+})
 
-export default router;
+export default router
