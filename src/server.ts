@@ -24,20 +24,27 @@ connectDB();
 const server = express();
 
 // Configuración de CORS
-const allowedOrigins = process.env.NODE_ENV === 'production'
-    ? [process.env.FRONTEND_URL]
-    : ['http://localhost:3000', 'http://localhost:3001'];
-
 const corsOptions: CorsOptions = {
-    origin: function(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
+    origin: function (origin, callback) {
+        // Permitir solicitudes desde FRONTEND_URL o sin origen (Swagger/Postman)
+        if (!origin || origin === process.env.FRONTEND_URL) {
             callback(null, true);
         } else {
             callback(new Error('Error de CORS'));
         }
     },
 };
-server.use(cors(corsOptions));
+
+// Aplicar CORS solo a las rutas de la API
+server.use('/api', cors(corsOptions));
+
+// Configurar CORS sin restricciones para Swagger
+server.use(
+    '/docs',
+    cors(), // Swagger no tiene restricciones de origen
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec, swaggerUiOptions)
+);
 
 // Middleware para leer datos de formularios
 server.use(express.json());
@@ -45,13 +52,11 @@ server.use(express.json());
 // Configurar carpeta pública para servir archivos estáticos
 server.use(express.static(path.join(__dirname, '../public')));
 
+// Middleware de registro HTTP
 server.use(morgan('dev'));
 
 // Rutas de productos
 server.use('/api/products', router);
-
-// Documentación Swagger
-server.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 
 // Exportar el servidor
 export default server;
