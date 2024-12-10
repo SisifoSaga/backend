@@ -23,17 +23,32 @@ const swaggerSpec = swaggerJSDoc(options);
 
 const swaggerUiOptions: SwaggerUiOptions = {
     customCss: `
-        .topbar-wrapper .link {
-            content: url('https://codigoconjuan.com/wp-content/themes/cursosjuan/img/logo.svg');
-            height: 80px;
-            width: auto;
-        }
         .swagger-ui .topbar {
             background-color: #2b3b45;
+        }
+        .swagger-ui .topbar-wrapper .link {
+            display: none; /* Oculta el logotipo predeterminado de Swagger */
+        }
+        .swagger-ui .topbar-wrapper::before {
+            content: '';
+            display: inline-block;
+            background: url('/logo.png') no-repeat center;
+            background-size: contain;
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        .swagger-ui .topbar-wrapper {
+            display: flex;
+            align-items: center;
         }
     `,
     customSiteTitle: 'Documentación REST API Express / TypeScript',
 };
+
+
+
+
 
 // Exporta todo como named exports
 export { swaggerSpec, swaggerUiOptions };
