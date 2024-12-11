@@ -28,16 +28,18 @@ const corsOptions: CorsOptions = {
     origin: function (origin, callback) {
         console.log('Solicitud desde el origen:', origin); // Log para depurar
         if (!origin || origin === process.env.FRONTEND_URL) {
-            callback(null, true);
+            console.log('Origen permitido:', origin);
+            callback(null, true); // Permitir FRONTEND_URL o solicitudes internas
         } else {
-            console.log('Origen no permitido:', origin); // Log en caso de error
-            callback(new Error('Error de CORS: Origin no permitido'));
+            console.warn('Origen no explícito, pero permitido:', origin);
+            callback(null, true); // Permitir todos los demás orígenes
         }
     },
+    credentials: true, // Permitir cookies o encabezados personalizados
 };
 
-// Aplicar CORS solo a las rutas de la API
-server.use('/api', cors(corsOptions));
+// Aplicar CORS globalmente
+server.use(cors(corsOptions));
 
 // Configurar CORS sin restricciones para Swagger
 server.use(
@@ -66,3 +68,4 @@ server.get('/', (req, res) => {
 
 // Exportar el servidor
 export default server;
+
