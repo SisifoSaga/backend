@@ -25,18 +25,19 @@ const server = express();
 
 import cors, { CorsOptions } from 'cors';
 
-// Configuración de CORS para permitir solo el origen FRONTEND_URL
+// Configuración de CORS para permitir todos los orígenes
 const corsOptions: CorsOptions = {
     origin: function (origin, callback) {
         console.log('Solicitud desde el origen:', origin); // Log para depurar
         if (!origin || origin === process.env.FRONTEND_URL) {
-            callback(null, true); // Permitir el origen
+            console.log('Origen permitido:', origin); // Log para confirmar
+            callback(null, true); // Permitir el origen FRONTEND_URL
         } else {
-            console.error('Origen no permitido:', origin); // Log de error
-            callback(new Error('Error de CORS: Origin no permitido'));
+            console.warn('Origen no listado explícitamente, pero permitido:', origin); // Permitir otros orígenes
+            callback(null, true); // Permitir todos los demás orígenes
         }
     },
-    credentials: true, // Permitir envío de cookies si es necesario
+    credentials: true, // Permitir el envío de cookies y encabezados de autorización
 };
 
 // Aplicar CORS globalmente
