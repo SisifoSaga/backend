@@ -26,11 +26,12 @@ const server = express();
 // Configuración de CORS
 const corsOptions: CorsOptions = {
     origin: function (origin, callback) {
-        // Permitir solicitudes desde FRONTEND_URL o sin origen (Swagger/Postman)
-        if (origin === process.env.FRONTEND_URL) {
+        console.log('Solicitud desde el origen:', origin); // Log para depurar
+        if (!origin || origin === process.env.FRONTEND_URL) {
             callback(null, true);
         } else {
-            callback(new Error('Error de CORS'));
+            console.log('Origen no permitido:', origin); // Log en caso de error
+            callback(new Error('Error de CORS: Origin no permitido'));
         }
     },
 };
@@ -58,5 +59,11 @@ server.use(morgan('dev'));
 // Rutas de productos
 server.use('/api/products', router);
 
+// Ruta base
+server.get('/', (req, res) => {
+    res.send('Bienvenido a la API');
+});
+
 // Exportar el servidor
 export default server;
+
