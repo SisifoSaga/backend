@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize-typescript'
+import { Sequelize } from 'sequelize-typescript';
 import pg from "pg"
 dotenv.config()
 
@@ -6,7 +6,7 @@ const db = new Sequelize('postgresql://rest_api_node_typescript_c5gd_user:nuC2Yn
     dialect: 'postgres',
     dialectModule: pg,
     models: [__dirname + '/../models/**/*'],
-    logging, false,
+    logging: false,
     dialectOptions: {
         ssl:{
             require: true,
@@ -15,4 +15,4 @@ const db = new Sequelize('postgresql://rest_api_node_typescript_c5gd_user:nuC2Yn
     }
 })
 
-export default db
+export default db;
