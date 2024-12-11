@@ -23,21 +23,24 @@ connectDB();
 // Instancia única de express
 const server = express();
 
-// Configuración de CORS
+import cors, { CorsOptions } from 'cors';
+
+// Configuración de CORS para permitir solo el origen FRONTEND_URL
 const corsOptions: CorsOptions = {
     origin: function (origin, callback) {
         console.log('Solicitud desde el origen:', origin); // Log para depurar
         if (!origin || origin === process.env.FRONTEND_URL) {
-            callback(null, true);
+            callback(null, true); // Permitir el origen
         } else {
-            console.log('Origen no permitido:', origin); // Log en caso de error
+            console.error('Origen no permitido:', origin); // Log de error
             callback(new Error('Error de CORS: Origin no permitido'));
         }
     },
+    credentials: true, // Permitir envío de cookies si es necesario
 };
 
-// Aplicar CORS solo a las rutas de la API
-server.use('/api', cors(corsOptions));
+// Aplicar CORS globalmente
+server.use(cors(corsOptions));
 
 // Configurar CORS sin restricciones para Swagger
 server.use(
