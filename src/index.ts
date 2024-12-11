@@ -1,9 +1,8 @@
-import cors from 'cors';
-import express from 'express';
+import colors from 'colors'
+import server from './server'
 
-const app = express();
+const port = process.env.PORT || 4000
 
-app.use(cors({
-    origin: ['https://frontend-five-tau.vercel.app', 'http://localhost:4000'], // Agrega tu dominio de Vercel
-    credentials: true, // Si usas cookies o headers personalizados
-}));
+server.listen(port, () => {
+    console.log( colors.cyan.bold( REST API en el puerto ${port}))
+})
